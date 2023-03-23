@@ -1,31 +1,40 @@
-import { useState } from "react";
+import { useState, useCallback, CSSProperties } from "react";
 import { ItemBox } from "./ItemBox";
 import { getRandomItem, Item } from "./getRandomItem";
+import { FixedSizeList as List } from 'react-window';
 
 export const App = () => {
   const [items, setItems] = useState(() =>
-    Array.from({ length: 1000 }, () => getRandomItem())
+    Array.from({ length: 100000 }, () => getRandomItem())
   );
 
-  const addItem = () => {
+  const addItem = useCallback(() => {
     setItems((items) => [getRandomItem()].concat(items));
-  };
+  }, []);
 
-  const removeItem = (itemToRemove: Item) => {
+  const removeItem = useCallback((itemToRemove: Item) => {
     setItems((items) => items.filter((item) => item !== itemToRemove));
-  };
+  }, []);
+
 
   return (
     <>
-      <div className="content">
-        {items.map((item) => (
-          <ItemBox
-            key={item.id}
-            item={item}
-            onRemove={() => removeItem(item)}
-          />
-        ))}
-      </div>
+      <List 
+        width={640}
+        height={480}
+        itemCount={items.length}
+        itemSize={100}
+      >
+        {({ index, style }: { index: number, style: CSSProperties }) => (
+          <div style={style} key={items[index].id}>
+            <ItemBox
+              key={items[index].id}
+              item={items[index]}
+              removeItem={removeItem}
+            />
+          </div>
+        )}
+      </List>
       <button className="fab" onClick={addItem}>
         +
       </button>

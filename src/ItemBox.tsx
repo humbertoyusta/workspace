@@ -1,18 +1,22 @@
 import { IoIosClose } from "react-icons/io";
 import { Item } from "./getRandomItem";
+import { memo } from "react";
+
+let renders = 0;
 
 interface ItemBoxProps {
   item: Item;
-  onRemove: () => void;
+  removeItem: (itemToRemove: Item) => void;
 }
 
-export const ItemBox = ({ item, onRemove }: ItemBoxProps) => {
+export const ItemBox = memo(({ item, removeItem }: ItemBoxProps) => {
+  console.log(++renders);
   return (
     <div style={{ background: item.background }}>
       <h3>{item.word}</h3>
-      <button onClick={onRemove}>
-        <IoIosClose onClick={onRemove} className="icon-remove" size="2.5em" />
+      <button onClick={() => removeItem(item)}>
+        <IoIosClose onClick={() => removeItem(item)} className="icon-remove" size="2.5em" />
       </button>
     </div>
   );
-};
+});
